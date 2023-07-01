@@ -2,7 +2,7 @@ package com.quangduong.redis.api;
 
 import com.quangduong.redis.dto.user.UserDTO;
 import com.quangduong.redis.security.CustomUserDetails;
-import com.quangduong.redis.service.UserService;
+import com.quangduong.redis.service.IUserService;
 import com.quangduong.redis.utils.JwtUtils;
 import com.quangduong.redis.utils.SecurityUtils;
 import jakarta.validation.Valid;
@@ -28,7 +28,7 @@ public class AuthAPI {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     @Autowired
     private JwtUtils jwtUtils;

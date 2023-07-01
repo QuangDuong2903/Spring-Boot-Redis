@@ -38,4 +38,12 @@ public class TaskDTO implements Serializable {
     public void setDone(Boolean done) {
         this.done = done;
     }
+
+    public TaskDTO() {}
+
+    public TaskDTO(long id, String title, Boolean done) {
+        this.id = id;
+        this.title = title;
+        this.done = done;
+    }
 }

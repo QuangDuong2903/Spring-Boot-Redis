@@ -5,7 +5,7 @@ import com.quangduong.redis.dto.todo.TaskUpdateDTO;
 
 import java.util.List;
 
-public interface TaskService {
+public interface ITaskService {
 
     List<TaskDTO> getAllTasks();
 

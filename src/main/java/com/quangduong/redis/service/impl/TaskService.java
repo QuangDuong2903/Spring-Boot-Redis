@@ -3,10 +3,11 @@ package com.quangduong.redis.service.impl;
 import com.quangduong.redis.dto.todo.TaskDTO;
 import com.quangduong.redis.dto.todo.TaskUpdateDTO;
 import com.quangduong.redis.entity.TaskEntity;
+import com.quangduong.redis.exception.NoPermissionException;
 import com.quangduong.redis.mapper.TaskMapper;
 import com.quangduong.redis.repository.TaskRepository;
 import com.quangduong.redis.repository.UserRepository;
-import com.quangduong.redis.service.TaskService;
+import com.quangduong.redis.service.ITaskService;
 import com.quangduong.redis.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @Service
 @EnableCaching
-public class TaskServiceImpl implements TaskService {
+public class TaskService implements ITaskService {
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -54,6 +55,8 @@ public class TaskServiceImpl implements TaskService {
     public TaskDTO updateTask(TaskUpdateDTO dto) {
         TaskEntity entity = taskRepository.findById(dto.getId())
                 .orElseThrow(() -> new RuntimeException("Not found todo with id: " + dto.getId()));
+        if (entity.getUser().getId() != securityUtils.getUserId())
+            throw new NoPermissionException("Not allowed");
         return taskMapper.toDTO(taskRepository.save(taskMapper.toEntity(entity, dto)));
     }
 
@@ -61,6 +64,19 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     @CacheEvict(value = "tasks", key = "@securityUtils.getUserId()")
     public void deleteTask(long id) {
+        TaskEntity entity = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Not found todo with id: " + id));
+        if (entity.getUser().getId() != securityUtils.getUserId())
+            throw new NoPermissionException("Not allowed");
         taskRepository.deleteById(id);
+    }
+
+    public TaskService() {}
+
+    public TaskService(SecurityUtils securityUtils, UserRepository userRepository, TaskRepository taskRepository, TaskMapper taskMapper) {
+        this.securityUtils = securityUtils;
+        this.userRepository = userRepository;
+        this.taskRepository = taskRepository;
+        this.taskMapper = taskMapper;
     }
 }

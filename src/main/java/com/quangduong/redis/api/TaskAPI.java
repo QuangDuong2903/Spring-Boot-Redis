@@ -2,8 +2,7 @@ package com.quangduong.redis.api;
 
 import com.quangduong.redis.dto.todo.TaskDTO;
 import com.quangduong.redis.dto.todo.TaskUpdateDTO;
-import com.quangduong.redis.service.TaskService;
-import com.quangduong.redis.utils.SecurityUtils;
+import com.quangduong.redis.service.ITaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,7 @@ import java.util.List;
 public class TaskAPI {
 
     @Autowired
-    private TaskService taskService;
+    private ITaskService taskService;
 
     @GetMapping
     public ResponseEntity<List<TaskDTO>> getAllTasks() {

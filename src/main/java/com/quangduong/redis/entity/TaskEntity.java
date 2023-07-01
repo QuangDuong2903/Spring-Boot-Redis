@@ -39,4 +39,12 @@ public class TaskEntity extends BaseEntity {
     public void setUser(UserEntity user) {
         this.user = user;
     }
+
+    public TaskEntity() {}
+
+    public TaskEntity(String title, boolean done, UserEntity user) {
+        this.title = title;
+        this.done = done;
+        this.user = user;
+    }
 }
