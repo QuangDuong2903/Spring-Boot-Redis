@@ -7,6 +7,7 @@ import com.quangduong.redis.utils.JwtUtils;
 import com.quangduong.redis.utils.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +37,7 @@ public class AuthAPI {
     @PostMapping("signup")
     public ResponseEntity<AuthResponse> signUp(@RequestBody @Valid UserDTO dto) {
         UserDTO user = userService.createUser(dto);
-        return ResponseEntity.ok(new AuthResponse(dto.getUsername(), jwtUtils.generateToken(user.getUsername())));
+        return new ResponseEntity<>(new AuthResponse(dto.getUsername(), jwtUtils.generateToken(user.getUsername())), HttpStatus.CREATED);
     }
 
     @PostMapping("signin")
