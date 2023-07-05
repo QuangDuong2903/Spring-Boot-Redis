@@ -4,6 +4,7 @@ import com.quangduong.redis.dto.todo.TaskDTO;
 import com.quangduong.redis.dto.todo.TaskUpdateDTO;
 import com.quangduong.redis.entity.TaskEntity;
 import com.quangduong.redis.exception.NoPermissionException;
+import com.quangduong.redis.exception.ResourceNotFoundException;
 import com.quangduong.redis.mapper.TaskMapper;
 import com.quangduong.redis.repository.TaskRepository;
 import com.quangduong.redis.repository.UserRepository;
@@ -38,7 +39,7 @@ public class TaskService implements ITaskService {
     @Cacheable(value = "tasks", key = "@securityUtils.getUserId()") // generate key in redis with template tasks::userId
     public List<TaskDTO> getAllTasks() {
         long userId = securityUtils.getUserId();
-        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Not found user with id: " + userId))
+        return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Not found user with id: " + userId))
                 .getTasks().stream().map(taskMapper::toDTO).toList();
     }
 
@@ -54,7 +55,7 @@ public class TaskService implements ITaskService {
     @CacheEvict(value = "tasks", key = "@securityUtils.getUserId()")
     public TaskDTO updateTask(TaskUpdateDTO dto) {
         TaskEntity entity = taskRepository.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("Not found todo with id: " + dto.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Not found todo with id: " + dto.getId()));
         if (entity.getUser().getId() != securityUtils.getUserId())
             throw new NoPermissionException("Not allowed");
         return taskMapper.toDTO(taskRepository.save(taskMapper.toEntity(entity, dto)));
@@ -65,7 +66,7 @@ public class TaskService implements ITaskService {
     @CacheEvict(value = "tasks", key = "@securityUtils.getUserId()")
     public void deleteTask(long id) {
         TaskEntity entity = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found todo with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Not found todo with id: " + id));
         if (entity.getUser().getId() != securityUtils.getUserId())
             throw new NoPermissionException("Not allowed");
         taskRepository.deleteById(id);

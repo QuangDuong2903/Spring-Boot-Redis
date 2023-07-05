@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +31,22 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<ErrorResponse>(
                 new ErrorResponse(HttpServletResponse.SC_FORBIDDEN, e.getMessage(), request.getRequestURI()),
                 HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(UsernameExistsException.class)
+    public ResponseEntity<ErrorResponse> usernameExistsExceptionHandler(UsernameExistsException e, HttpServletRequest request) {
+        logger.error(e.getMessage());
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse(HttpServletResponse.SC_CONFLICT, e.getMessage(), request.getRequestURI()),
+                HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> usernameExistsExceptionHandler(BadCredentialsException e, HttpServletRequest request) {
+        logger.error(e.getMessage());
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse(HttpServletResponse.SC_BAD_REQUEST, e.getMessage(), request.getRequestURI()),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BindException.class)

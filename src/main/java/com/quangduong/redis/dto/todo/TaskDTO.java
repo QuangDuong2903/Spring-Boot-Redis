@@ -12,7 +12,7 @@ public class TaskDTO implements Serializable {
     @NotBlank(message = "Title is required")
     private String title;
 
-    @NotNull(message = "status is required")
+    @NotNull(message = "Status is required")
     private Boolean done;
 
     public long getId() {
